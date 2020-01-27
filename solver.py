@@ -50,24 +50,39 @@ class Solver:
             print(')', end='')
 
     def solve(self):
-        for c_num, clause in enumerate(self.cnf):
-            clause_value = False
-            for v in clause:
-                if self.value[v.ident] and not v.negation \
-                        or not self.value[v.ident] and v.negation:
-                    clause_value = True
-            if not clause_value:
+        for c_num in range(self.cnf):
+            if not self.test_valuable(c_num):
                 self.fix_clause(c_num)
+
+    def test_valuable(self, c_num):
+        for v in self.cnf[c_num]:
+            if self.value[v.ident] and not v.negation \
+                    or not self.value[v.ident] and v.negation:
+                return True
+        return False
 
     def fix_clause(self, c_num):
         # fix clause
-        pass
+        while not self.test_valuable(c_num):
+            changed = set()
+            for v in self.cnf[c_num]:
+                base = self.value[v.ident]
+                # rand values
+                self.value[v.ident] = bool(random.getrandbits(1))
+                if base != self.value[v.ident]:
+                    changed.add(v.ident)
+        for c_num, clause in enumerate(self.cnf):
+            # if changed is in clause fix clause
+            pass
 
 
 if __name__ == '__main__':
     sat = [
-        [Variable(1), Variable(2, True), Variable(3)],
-        [Variable(1), Variable(3, True), Variable(4)]
+        [Variable(0), Variable(2, True), Variable(3)],
+        [Variable(1), Variable(3, True), Variable(0, True)]
     ]
 
     agent = Solver(sat)
+
+    print(agent.test_valuable(0))
+    print(agent.test_valuable(1))
