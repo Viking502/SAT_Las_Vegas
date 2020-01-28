@@ -1,17 +1,8 @@
 import random
+from sat_variable import Variable
 
-
-class Variable:
-
-    def __init__(self, id, neg=False):
-        self.ident = id
-        self.negation = neg
-        self.value = False
-
-    def print(self):
-        if self.negation:
-            print('~', end='')
-        print(self.ident, end=' ')
+import graph
+from hamilton_to_sat import convert_hamilton_to_sat
 
 
 class Solver:
@@ -50,7 +41,7 @@ class Solver:
             print(')', end='')
 
     def solve(self):
-        for c_num in range(self.cnf):
+        for c_num in range(len(self.cnf)):
             if not self.test_valuable(c_num):
                 self.fix_clause(c_num)
 
@@ -63,8 +54,9 @@ class Solver:
 
     def fix_clause(self, c_num):
         # fix clause
+        changed = set()
         while not self.test_valuable(c_num):
-            changed = set()
+            changed.clear()
             for v in self.cnf[c_num]:
                 base = self.value[v.ident]
                 # rand values
@@ -73,16 +65,33 @@ class Solver:
                     changed.add(v.ident)
         for c_num, clause in enumerate(self.cnf):
             # if changed is in clause fix clause
-            pass
+            for v in clause:
+                for s in changed:
+                    if v.ident == s:
+                        self.fix_clause(c_num)
+                        return
+
+    def print_result(self):
+        print('[', end='')
+        first_flag = True
+        for id, val in enumerate(self.value):
+            if first_flag:
+                first_flag = False
+            else:
+                print(', ', end='')
+            print(id, '-', val, end='')
+
+        print(']', end='')
 
 
 if __name__ == '__main__':
     sat = [
         [Variable(0), Variable(2, True), Variable(3)],
-        [Variable(1), Variable(3, True), Variable(0, True)]
+        [Variable(4), Variable(3, True), Variable(0, True)],
+        [Variable(1, True), Variable(4), Variable(3, True)],
+        [Variable(4, True), Variable(2), Variable(1)]
     ]
 
     agent = Solver(sat)
-
-    print(agent.test_valuable(0))
-    print(agent.test_valuable(1))
+    agent.solve()
+    agent.print_result()
