@@ -1,8 +1,7 @@
 import random
 from sat_variable import Variable
 
-import graph
-from hamilton_to_sat import convert_hamilton_to_sat
+from sat_generator import generate_random_sat
 
 
 class Solver:
@@ -85,13 +84,15 @@ class Solver:
 
 
 if __name__ == '__main__':
-    sat = [
+    sample1 = [
         [Variable(0), Variable(2, True), Variable(3)],
         [Variable(4), Variable(3, True), Variable(0, True)],
         [Variable(1, True), Variable(4), Variable(3, True)],
         [Variable(4, True), Variable(2), Variable(1)]
     ]
 
-    agent = Solver(sat)
+    sample2 = generate_random_sat(12, 8, 3)
+
+    agent = Solver(sample2)
     agent.solve()
     agent.print_result()
