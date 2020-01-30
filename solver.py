@@ -9,8 +9,11 @@ class Solver:
 
     def __init__(self, problem, time_limit):
         self.cnf = problem
-        self.begin_time = 0
+
+        self.begin_time = -1
+        self.finish_time = -1
         self.time_limit = time_limit
+
         #  IT WILL BE GOOD SOLUTION IN CASE WE DON'T WANT TO INDEX VARIABLES
         # self.variable = set()
         # for clause in self.cnf:
@@ -31,6 +34,7 @@ class Solver:
         for c_num in range(len(self.cnf)):
             if not self.test_valuable(c_num):
                 self.fix_clause(c_num)
+        self.finish_time = time.time()
 
     def test_valuable(self, c_num):
         for v in self.cnf[c_num]:
@@ -59,7 +63,8 @@ class Solver:
                         # print(time.time() - self.begin_time)
                         if time.time() - self.begin_time > 100:
                             return
-                        self.fix_clause(c_num)
+                        elif not self.test_valuable(c_num):
+                            self.fix_clause(c_num)
 
     def validate_result(self):
         is_valid = True
@@ -108,7 +113,7 @@ if __name__ == '__main__':
         [Variable(4, True), Variable(2), Variable(1)]
     ]
 
-    sample2 = generate_random_sat(102, 8, 5)
+    sample2 = generate_random_sat(202, 8, 5)
 
     sample3 = [
         [Variable(0)],
@@ -121,3 +126,4 @@ if __name__ == '__main__':
         agent.print_result()
     else:
         print('Wrong answer')
+    print('execution_time: ', agent.finish_time - agent.begin_time)
