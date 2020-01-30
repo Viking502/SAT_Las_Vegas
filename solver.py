@@ -68,7 +68,6 @@ class Solver:
                 for s in changed:
                     if v.ident == s:
                         self.fix_clause(c_num)
-                        return
 
     def print_result(self):
         print('[', end='')
@@ -91,7 +90,12 @@ if __name__ == '__main__':
         [Variable(4, True), Variable(2), Variable(1)]
     ]
 
-    sample2 = generate_random_sat(12, 8, 3)
+    sample2 = generate_random_sat(62, 8, 5)
+
+    sample3 = [
+        [Variable(0)],
+        [Variable(0, True)]
+    ]
 
     agent = Solver(sample2)
     agent.solve()
