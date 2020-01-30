@@ -7,9 +7,10 @@ from sat_generator import generate_random_sat
 
 class Solver:
 
-    def __init__(self, problem):
+    def __init__(self, problem, time_limit):
         self.cnf = problem
         self.begin_time = 0
+        self.time_limit = time_limit
         #  IT WILL BE GOOD SOLUTION IN CASE WE DON'T WANT TO INDEX VARIABLES
         # self.variable = set()
         # for clause in self.cnf:
@@ -107,14 +108,14 @@ if __name__ == '__main__':
         [Variable(4, True), Variable(2), Variable(1)]
     ]
 
-    sample2 = generate_random_sat(202, 8, 5)
+    sample2 = generate_random_sat(102, 8, 5)
 
     sample3 = [
         [Variable(0)],
         [Variable(0, True)]
     ]
 
-    agent = Solver(sample2)
+    agent = Solver(sample2, 100)
     agent.solve()
     if agent.validate_result():
         agent.print_result()
