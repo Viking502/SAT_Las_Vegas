@@ -1,4 +1,5 @@
 import random
+import time
 from sat_variable import Variable
 
 from sat_generator import generate_random_sat
@@ -8,7 +9,7 @@ class Solver:
 
     def __init__(self, problem):
         self.cnf = problem
-
+        self.begin_time = 0
         #  IT WILL BE GOOD SOLUTION IN CASE WE DON'T WANT TO INDEX VARIABLES
         # self.variable = set()
         # for clause in self.cnf:
@@ -25,6 +26,7 @@ class Solver:
         self.print_cnf()
 
     def solve(self):
+        self.begin_time = time.time()
         for c_num in range(len(self.cnf)):
             if not self.test_valuable(c_num):
                 self.fix_clause(c_num)
@@ -38,6 +40,7 @@ class Solver:
 
     def fix_clause(self, c_num):
         # fix clause
+
         changed = set()
         while not self.test_valuable(c_num):
             changed.clear()
@@ -52,6 +55,9 @@ class Solver:
             for v in clause:
                 for s in changed:
                     if v.ident == s:
+                        # print(time.time() - self.begin_time)
+                        if time.time() - self.begin_time > 100:
+                            return
                         self.fix_clause(c_num)
 
     def validate_result(self):
@@ -101,7 +107,7 @@ if __name__ == '__main__':
         [Variable(4, True), Variable(2), Variable(1)]
     ]
 
-    sample2 = generate_random_sat(62, 8, 5)
+    sample2 = generate_random_sat(202, 8, 5)
 
     sample3 = [
         [Variable(0)],
