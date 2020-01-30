@@ -9,35 +9,20 @@ class Solver:
     def __init__(self, problem):
         self.cnf = problem
 
-        self.variable = set()
+        #  IT WILL BE GOOD SOLUTION IN CASE WE DON'T WANT TO INDEX VARIABLES
+        # self.variable = set()
+        # for clause in self.cnf:
+        #     for v in clause:
+        #         self.variable.add(v.ident)
+
+        max_id = 0
         for clause in self.cnf:
             for v in clause:
-                self.variable.add(v.ident)
+                max_id = max(v.ident, max_id)
 
         # initialize random
-        self.value = [bool(random.getrandbits(1)) for _ in self.variable]
+        self.value = [bool(random.getrandbits(1)) for _ in range(max_id + 1)]
         self.print_cnf()
-
-        print()
-        print(self.value)
-
-    def print_cnf(self):
-
-        first_clause_flag = True
-        for clause in self.cnf:
-            if first_clause_flag:
-                first_clause_flag = False
-            else:
-                print(' and ', end='')
-            print('(', end='')
-            first_var_flag = True
-            for v in clause:
-                if first_var_flag:
-                    first_var_flag = False
-                else:
-                    print(' or ', end='')
-                v.print()
-            print(')', end='')
 
     def solve(self):
         for c_num in range(len(self.cnf)):
@@ -69,6 +54,33 @@ class Solver:
                     if v.ident == s:
                         self.fix_clause(c_num)
 
+    def validate_result(self):
+        is_valid = True
+        c_num = 0
+        while c_num < len(self.cnf) and is_valid:
+            is_valid = self.test_valuable(c_num)
+            c_num += 1
+        return is_valid
+
+    def print_cnf(self):
+
+        first_clause_flag = True
+        for clause in self.cnf:
+            if first_clause_flag:
+                first_clause_flag = False
+            else:
+                print(' and ', end='')
+            print('(', end='')
+            first_var_flag = True
+            for v in clause:
+                if first_var_flag:
+                    first_var_flag = False
+                else:
+                    print(' or ', end='')
+                v.print()
+            print(')', end='')
+        print()
+
     def print_result(self):
         print('[', end='')
         first_flag = True
@@ -78,8 +90,7 @@ class Solver:
             else:
                 print(', ', end='')
             print(id, '-', val, end='')
-
-        print(']', end='')
+        print(']')
 
 
 if __name__ == '__main__':
@@ -99,4 +110,7 @@ if __name__ == '__main__':
 
     agent = Solver(sample2)
     agent.solve()
-    agent.print_result()
+    if agent.validate_result():
+        agent.print_result()
+    else:
+        print('Wrong answer')
